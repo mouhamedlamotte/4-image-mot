@@ -1,113 +1,151 @@
+"use client";
+
+import Mockup from "@/components/mockup";
+import { useLevel } from "@/context/LevelContext";
+import { ChevronLeft } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [trial, setTrial] = useState<
+    {
+      id: number;
+      letter: string;
+    }[]
+  >([]);
+
+  const { level, UpLevel } = useLevel();
+
+  useEffect(() => {
+    const verify = () => {
+      if (trial.length == level?.word.length) {
+        let combinedLetters = "";
+        trial.forEach((item) => {
+          combinedLetters += item.letter;
+        });
+        if (combinedLetters === level?.word) {
+          setTrial([]);
+          UpLevel();
+        } else {
+          alert("Incorect, reesayer");
+        }
+      }
+    };
+
+    setTimeout(() => {
+      verify();
+    }, 100);
+  }, [trial, level?.word]);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <Mockup>
+        <div className="bg-slate-900">
+          <div className="p-4 w-full shadow-lg bg-slate-800  flex items-center">
+            <button title="back" className="text-white">
+              <ChevronLeft />
+            </button>
+            <button
+              title="back"
+              className="text-white bg-slate-700 rounded-full px-6 py-1 shadow-inner ml-auto"
+            >
+              <span className="font-bold text-sm">{level?.level}</span>
+            </button>
+          </div>
+          <div className="py-4 px-2 grid grid-cols-2 gap-2">
+            {level?.images.map((image) => {
+              return <ImageItem src={image} key={image} />;
+            })}
+          </div>
+          <div className="w-full mt-4 flex justify-center ">
+            <div className="z-20  flex gap-2">
+              {[...Array(level?.word.length)].map((car, index) => {
+                return (
+                  <button
+                    onClick={() => {
+                      const newState = trial.filter(
+                        (item) => item.id != trial[index]?.id
+                      );
+                      setTrial(newState);
+                    }}
+                    title="chaine"
+                    style={{
+                      boxShadow:
+                        "0 0 14px rgba(96, 165, 250, 0.5), 0 0 14px rgba(96, 165, 250, 0.5), 0 0 14px rgba(96, 165, 250, 0.5), 0 0 14px rgba(96, 165, 250, 0.5)",
+                    }}
+                    key={index}
+                    className="bg-black flex items-center justify-center font-extrabold text-2xl text-white  h-[2.5rem] w-[2.5rem] border-b-4 border-slate-500 rounded-md outline-none focus:outline-none"
+                  >
+                    {trial[index]?.letter}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex w-full  mt-4 p-4 gap-2">
+            <div className="grow grid grid-cols-6 gap-2 ">
+              {level?.letters.map((car) => {
+                return (
+                  <div
+                    title="chaine"
+                    key={car.id}
+                    className="bg-slate-600  h-[3rem] w-[2.5rem]  rounded-md"
+                  >
+                    <ButtonItem
+                      car={car.letter}
+                      isUsed={trial.some((letter) => letter.id === car.id)}
+                      onclick={() => {
+                        if (trial.length < level?.word.length) {
+                          setTrial((prev) => [...prev, car]);
+                        }
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <div className="w-[15%] bg-green-800 rounded-md shadow-lg"></div>
+          </div>
         </div>
-      </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      </Mockup>
     </main>
   );
 }
+
+export const ImageItem = ({ src }: { src: string }) => {
+  return (
+    <div className="h-[10rem] rounded-md border-8 border-slate-600 bg-slate-950">
+      <Image
+        width={100}
+        height={100}
+        className="h-full w-full"
+        src={src}
+        alt="img"
+      />
+    </div>
+  );
+};
+
+export const InputItem = () => {};
+
+const ButtonItem = ({
+  car,
+  isUsed,
+  onclick,
+}: {
+  car: string;
+  isUsed: boolean;
+  onclick: () => void;
+}) => {
+  return (
+    <button
+      type="button"
+      onClick={onclick}
+      className={`bg-slate-200 h-full w-full rounded-md border-b-4 border-slate-500 font-extrabold  text-2xl flex justify-center items-center transition-all duration-200 ${
+        isUsed ? "scale-0" : "scale-100"
+      }`}
+    >
+      {car}
+    </button>
+  );
+};
