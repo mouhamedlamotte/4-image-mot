@@ -112,7 +112,7 @@ export default function Home() {
   );
 }
 
-export const ImageItem = ({ src }: { src: string }) => {
+const ImageItem = ({ src }: { src: string }) => {
   return (
     <div className="h-[10rem] rounded-md border-8 border-slate-600 bg-slate-950">
       <Image
@@ -126,7 +126,7 @@ export const ImageItem = ({ src }: { src: string }) => {
   );
 };
 
-export const InputItem = () => {};
+const InputItem = () => {};
 
 const ButtonItem = ({
   car,
